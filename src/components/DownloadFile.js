@@ -1,5 +1,5 @@
 import { Storage, API, graphqlOperation } from 'aws-amplify';
-import { getFileMeta } from './graphql/queries';
+import { getFileMeta } from '../graphql/queries';
 import { useParams } from 'react-router-dom';
 
 const handleDownload = async () => {
