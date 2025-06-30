@@ -11,6 +11,14 @@
       "defaultResolutionStrategy": {
         "type": "AUTOMERGE"
       }
-    }
+    },
+    "additionalAuthTypes": [
+      {
+        "mode": "API_KEY",
+        "expirationTime": 60,
+        "apiKeyExpirationDate": "2025-08-29T16:54:24.243Z",
+        "keyDescription": "public-access-key"
+      }
+    ]
   }
 }

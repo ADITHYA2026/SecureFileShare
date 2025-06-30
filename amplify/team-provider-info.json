@@ -14,6 +14,12 @@
     "categories": {
       "auth": {
         "securefileshare0c561650": {}
+      },
+      "storage": {
+        "fileupload": {}
+      },
+      "api": {
+        "securefileshare": {}
       }
     }
   }
