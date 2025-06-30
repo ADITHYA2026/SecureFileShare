@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Storage, API, graphqlOperation } from 'aws-amplify';
+import { graphqlOperation } from 'aws-amplify/api';
+import { API } from 'aws-amplify/api';
+import { Storage } from 'aws-amplify/storage';
 import { createFileMeta } from '../graphql/mutations'; // make sure path is correct
 import { v4 as uuidv4 } from 'uuid';
 
