@@ -1,0 +1,13 @@
+{
+  "resourceName": "fileupload",
+  "policyUUID": "ef2b3c41",
+  "bucketName": "fileuploadbucketsfs",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

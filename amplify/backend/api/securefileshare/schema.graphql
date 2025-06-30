@@ -1,0 +1,7 @@
+type FileMeta @model @auth(rules: [{ allow: public }]) {
+  id: ID!
+  filename: String!
+  fileKey: String!
+  expiry: AWSDateTime!
+  password: String
+}
