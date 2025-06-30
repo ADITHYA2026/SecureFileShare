@@ -1,5 +1,5 @@
 import { Storage, API, graphqlOperation } from 'aws-amplify';
-import { createFileMeta } from './graphql/mutations';
+import { createFileMeta } from '../graphql/mutations';
 import { v4 as uuidv4 } from 'uuid';
 
 const handleUpload = async () => {
