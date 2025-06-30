@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { graphqlOperation } from 'aws-amplify/api';
-import { API } from 'aws-amplify/api';
-import { Storage } from 'aws-amplify/storage';
-import { createFileMeta } from '../graphql/mutations'; // make sure path is correct
+import { generateClient } from 'aws-amplify/api';
+import { uploadData } from 'aws-amplify/storage';
+import { createFileMeta } from '../graphql/mutations';
 import { v4 as uuidv4 } from 'uuid';
 
 const UploadForm = ({ setLink, setIsUploading }) => {
   const [file, setFile] = useState(null);
   const [expiry, setExpiry] = useState(10); // minutes
   const [password, setPassword] = useState('');
+  const client = generateClient();
 
   const handleUpload = async () => {
     if (!file) return alert('Please select a file');
@@ -22,18 +22,27 @@ const UploadForm = ({ setLink, setIsUploading }) => {
       setIsUploading(true);
 
       // Upload file to S3
-      await Storage.put(`${id}/${filename}`, file);
+      await uploadData({
+        key: `${id}/${filename}`,
+        data: file,
+        options: {
+          contentType: file.type
+        }
+      }).result;
 
       // Save metadata
-      await API.graphql(graphqlOperation(createFileMeta, {
-        input: {
-          id,
-          filename,
-          fileKey: `${id}/${filename}`,
-          expiry: expiryDate.toISOString(),
-          password
+      await client.graphql({
+        query: createFileMeta,
+        variables: {
+          input: {
+            id,
+            filename,
+            fileKey: `${id}/${filename}`,
+            expiry: expiryDate.toISOString(),
+            password
+          }
         }
-      }));
+      });
 
       setLink(`${window.location.origin}/download/${id}`);
     } catch (err) {
@@ -52,6 +61,7 @@ const UploadForm = ({ setLink, setIsUploading }) => {
         value={expiry}
         onChange={(e) => setExpiry(e.target.value)}
         placeholder="Expiry (minutes)"
+        min="1"
       />
       <input
         type="password"
