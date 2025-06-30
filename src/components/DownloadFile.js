@@ -1,25 +1,59 @@
+import React, { useState } from 'react';
 import { Storage, API, graphqlOperation } from 'aws-amplify';
 import { getFileMeta } from '../graphql/queries';
 import { useParams } from 'react-router-dom';
 
-const handleDownload = async () => {
+const DownloadFile = () => {
   const { id } = useParams();
-  const res = await API.graphql(graphqlOperation(getFileMeta, { id }));
-  const fileData = res.data.getFileMeta;
+  const [enteredPassword, setEnteredPassword] = useState('');
+  const [status, setStatus] = useState('');
+  const [filename, setFilename] = useState('');
 
-  const now = new Date();
-  const expiry = new Date(fileData.expiry);
+  const handleDownload = async () => {
+    try {
+      const res = await API.graphql(graphqlOperation(getFileMeta, { id }));
+      const fileData = res.data.getFileMeta;
 
-  if (now > expiry) {
-    setStatus('expired');
-    return;
-  }
+      const now = new Date();
+      const expiry = new Date(fileData.expiry);
 
-  if (fileData.password && fileData.password !== enteredPassword) {
-    setStatus('wrong_password');
-    return;
-  }
+      if (now > expiry) {
+        setStatus('expired');
+        return;
+      }
 
-  const signedURL = await Storage.get(fileData.fileKey, { expires: 300 }); // 5 min
-  window.open(signedURL, "_blank");
+      if (fileData.password && fileData.password !== enteredPassword) {
+        setStatus('wrong_password');
+        return;
+      }
+
+      const signedURL = await Storage.get(fileData.fileKey, { expires: 300 });
+      setFilename(fileData.filename);
+      window.open(signedURL, "_blank");
+      setStatus('success');
+    } catch (err) {
+      console.error('Download failed:', err);
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div className="download-box">
+      <h2>Download File</h2>
+      <input
+        type="password"
+        placeholder="Enter password (if any)"
+        value={enteredPassword}
+        onChange={(e) => setEnteredPassword(e.target.value)}
+      />
+      <button onClick={handleDownload}>Download</button>
+
+      {status === 'expired' && <p style={{ color: 'red' }}>❌ Link expired</p>}
+      {status === 'wrong_password' && <p style={{ color: 'red' }}>❌ Wrong password</p>}
+      {status === 'success' && <p style={{ color: 'green' }}>✅ Download started: {filename}</p>}
+      {status === 'error' && <p style={{ color: 'red' }}>❌ Error occurred</p>}
+    </div>
+  );
 };
+
+export default DownloadFile;
